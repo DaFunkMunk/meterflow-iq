@@ -1,251 +1,112 @@
 """
-MeterFlow IQ - 01 Bronze Ingest CSV
+MeterFlow IQ - 02 Bronze Ingest MongoDB
+Connection/count test only.
 
 Purpose:
-Read the nine structured source CSV files from sample_data/,
-add Bronze audit metadata, write managed Delta tables,
-and validate row counts.
+Confirm that Databricks can connect to MongoDB Atlas and read the seeded
+meter_polling_events documents before writing the Bronze Delta table.
 
-Bronze rule:
-Do not clean or fix records here. Bronze preserves raw source records
-with traceability metadata.
+This does not write anything to Databricks yet.
 """
 
-from pathlib import Path
-import os
-import uuid
-
-from pyspark.sql import functions as F
-
 # -----------------------------------------------------------------------------
-# Config
+# Ensure required Python libraries are available
 # -----------------------------------------------------------------------------
 
-BRONZE_SCHEMA = "meterflow_iq_bronze"
-BRONZE_RUN_ID = f"bronze_csv_{uuid.uuid4().hex[:12]}"
-
-CSV_SOURCES = {
-    "facility_master.csv": {
-        "target_table": "bronze_facility_master",
-        "expected_rows": 25,
-    },
-    "meter_master.csv": {
-        "target_table": "bronze_meter_master",
-        "expected_rows": 125,
-    },
-    "raw_polling_readings.csv": {
-        "target_table": "bronze_raw_polling_readings",
-        "expected_rows": 180_056,
-    },
-    "flowcal_measurement_extract.csv": {
-        "target_table": "bronze_flowcal_measurement_extract",
-        "expected_rows": 7_500,
-    },
-    "nominations_daily.csv": {
-        "target_table": "bronze_nominations_daily",
-        "expected_rows": 1_500,
-    },
-    "support_tickets.csv": {
-        "target_table": "bronze_support_tickets",
-        "expected_rows": 350,
-    },
-    "pipeline_run_log.csv": {
-        "target_table": "bronze_pipeline_run_log",
-        "expected_rows": 150,
-    },
-    "dq_rules_reference.csv": {
-        "target_table": "bronze_dq_rules_reference",
-        "expected_rows": 20,
-    },
-    "known_issue_scenarios.csv": {
-        "target_table": "bronze_known_issue_scenarios",
-        "expected_rows": 15,
-    },
-}
+try:
+    import pymongo
+    from pymongo import MongoClient
+    from pymongo.server_api import ServerApi
+except ImportError:
+    print("Installing pymongo and dnspython...")
+    %pip install pymongo dnspython
+    import pymongo
+    from pymongo import MongoClient
+    from pymongo.server_api import ServerApi
 
 # -----------------------------------------------------------------------------
-# Locate sample_data folder
+# Notebook parameters
 # -----------------------------------------------------------------------------
 
-def resolve_sample_data_dir() -> Path:
-    """
-    Resolve the sample_data folder from the Databricks Git folder.
+DEFAULT_DB = "meterflow_iq"
+DEFAULT_EVENTS_COLLECTION = "meter_polling_events"
+DEFAULT_SEED_BATCH_ID = "MONGO-SEED-001"
+EXPECTED_ROWS = 25343
 
-    In this repo, the notebook usually lives under:
-        /Workspace/Users/<user>/meterflow-iq/databricks_notebooks
-
-    The sample_data folder lives one level above:
-        /Workspace/Users/<user>/meterflow-iq/sample_data
-    """
-    cwd = Path(os.getcwd())
-
-    candidate_sample_dirs = [
-        cwd / "sample_data",
-        cwd.parent / "sample_data",
-        Path("/Workspace/Users/ngpend2@gmail.com/meterflow-iq/sample_data"),
-    ]
-
-    for path in candidate_sample_dirs:
-        exists = path.exists()
-        has_facility = (path / "facility_master.csv").exists()
-
-        print(
-            f"Checking: {path} | "
-            f"exists={exists} | "
-            f"has_facility_master={has_facility}"
-        )
-
-        if exists and has_facility:
-            return path
-
-    raise RuntimeError(
-        "Could not find sample_data/facility_master.csv from this notebook."
+try:
+    dbutils.widgets.text("mongodb_uri", "", "MongoDB Atlas URI")
+    dbutils.widgets.text("mongodb_db", DEFAULT_DB, "MongoDB database")
+    dbutils.widgets.text(
+        "mongodb_events_collection",
+        DEFAULT_EVENTS_COLLECTION,
+        "MongoDB events collection",
     )
+    dbutils.widgets.text("seed_batch_id", DEFAULT_SEED_BATCH_ID, "Seed batch ID")
+
+    MONGODB_URI = dbutils.widgets.get("mongodb_uri").strip()
+    MONGODB_DB = dbutils.widgets.get("mongodb_db").strip()
+    EVENTS_COLLECTION = dbutils.widgets.get("mongodb_events_collection").strip()
+    SEED_BATCH_ID = dbutils.widgets.get("seed_batch_id").strip()
+except Exception:
+    MONGODB_URI = os.getenv("MONGODB_URI", "").strip()
+    MONGODB_DB = os.getenv("MONGODB_DB", DEFAULT_DB).strip()
+    EVENTS_COLLECTION = os.getenv(
+        "MONGODB_EVENTS_COLLECTION",
+        DEFAULT_EVENTS_COLLECTION,
+    ).strip()
+    SEED_BATCH_ID = os.getenv("MONGODB_SEED_BATCH_ID", DEFAULT_SEED_BATCH_ID).strip()
+
+if not MONGODB_URI:
+    raise RuntimeError(
+        "MongoDB URI is blank. Enter your MongoDB Atlas URI in the "
+        "mongodb_uri notebook parameter, then rerun this notebook."
+    )
+
+# -----------------------------------------------------------------------------
+# Connect and count
+# -----------------------------------------------------------------------------
 
 print("Spark version:", spark.version)
-print("Current working directory:", os.getcwd())
-print("Bronze run ID:", BRONZE_RUN_ID)
+print("PyMongo version:", pymongo.version)
+print("MongoDB database:", MONGODB_DB)
+print("MongoDB events collection:", EVENTS_COLLECTION)
+print("Seed batch ID:", SEED_BATCH_ID)
+print("Expected seed-batch rows:", EXPECTED_ROWS)
 
-sample_dir_path: Path = resolve_sample_data_dir()
+client = MongoClient(
+    MONGODB_URI,
+    server_api=ServerApi("1"),
+    serverSelectionTimeoutMS=15000,
+)
 
-print(f"Using sample_data folder: {sample_dir_path}")
+client.admin.command("ping")
+print("Successfully connected to MongoDB Atlas.")
 
-# -----------------------------------------------------------------------------
-# Create Bronze schema/database
-# -----------------------------------------------------------------------------
+db = client[MONGODB_DB]
+collection = db[EVENTS_COLLECTION]
 
-spark.sql(f"CREATE DATABASE IF NOT EXISTS {BRONZE_SCHEMA}")
-spark.sql(f"USE {BRONZE_SCHEMA}")
+total_docs = collection.count_documents({})
+batch_docs = collection.count_documents({"seed_batch_id": SEED_BATCH_ID})
 
-print(f"Using Bronze schema/database: {BRONZE_SCHEMA}")
+print("Total docs in collection:", total_docs)
+print(f"Docs for seed batch {SEED_BATCH_ID}:", batch_docs)
 
-# -----------------------------------------------------------------------------
-# Helper functions
-# -----------------------------------------------------------------------------
-
-def add_bronze_metadata(df, source_file: str, source_path: str):
-    """
-    Add standard Bronze metadata columns.
-
-    Bronze should preserve raw source records with traceability metadata.
-
-    _record_hash is created from the raw row before metadata columns are added.
-    Using F.to_json(F.struct("*")) avoids repeatedly accessing df.columns inside
-    the function and keeps the editor/linter warning away.
-    """
-    return (
-        df
-        .withColumn(
-            "_record_hash",
-            F.sha2(F.to_json(F.struct("*")), 256)
-        )
-        .withColumn("_bronze_run_id", F.lit(BRONZE_RUN_ID))
-        .withColumn("_source_file", F.lit(source_file))
-        .withColumn("_source_path", F.lit(source_path))
-        .withColumn("_source_type", F.lit("csv"))
-        .withColumn("_ingested_at", F.current_timestamp())
-    )
-
-def read_csv(source_file: str):
-    """
-    Read one source CSV from the sample_data folder.
-    """
-    source_path = sample_dir_path / source_file
-    spark_path = f"file:{source_path}"
-
-    return (
-        spark.read
-        .option("header", True)
-        .option("inferSchema", True)
-        .option("multiLine", False)
-        .option("escape", '"')
-        .csv(spark_path)
-    )
-
-# -----------------------------------------------------------------------------
-# Ingest CSV files into Bronze Delta tables
-# -----------------------------------------------------------------------------
-
-summary_rows = []
-
-for source_file, config in CSV_SOURCES.items():
-    target_table = config["target_table"]
-    expected_rows = config["expected_rows"]
-    source_path = sample_dir_path / source_file
-
-    print("-" * 90)
-    print(f"Reading source file: {source_file}")
-    print(f"Target Bronze table: {BRONZE_SCHEMA}.{target_table}")
-
-    if not source_path.exists():
-        raise FileNotFoundError(f"Missing source file: {source_path}")
-
-    raw_df = read_csv(source_file)
-    actual_rows = raw_df.count()
-
-    bronze_df = add_bronze_metadata(
-        df=raw_df,
-        source_file=source_file,
-        source_path=str(source_path),
-    )
-
-    (
-        bronze_df.write
-        .format("delta")
-        .mode("overwrite")
-        .option("overwriteSchema", True)
-        .saveAsTable(f"{BRONZE_SCHEMA}.{target_table}")
-    )
-
-    written_rows = spark.table(f"{BRONZE_SCHEMA}.{target_table}").count()
-
-    status = (
-        "PASS"
-        if actual_rows == expected_rows and written_rows == expected_rows
-        else "CHECK"
-    )
-
-    summary_rows.append(
-        {
-            "source_file": source_file,
-            "target_table": f"{BRONZE_SCHEMA}.{target_table}",
-            "expected_rows": expected_rows,
-            "source_rows": actual_rows,
-            "written_rows": written_rows,
-            "status": status,
-        }
-    )
-
-    print(f"Expected rows: {expected_rows:,}")
-    print(f"Source rows:   {actual_rows:,}")
-    print(f"Written rows:  {written_rows:,}")
-    print(f"Status:        {status}")
-
-# -----------------------------------------------------------------------------
-# Display validation summary
-# -----------------------------------------------------------------------------
-
-summary_df = spark.createDataFrame(summary_rows)
-
-print("=" * 90)
-print("Bronze CSV ingest complete.")
-print(f"Bronze schema/database: {BRONZE_SCHEMA}")
-print(f"Bronze run ID: {BRONZE_RUN_ID}")
-
-display(summary_df.orderBy("source_file"))
-
-failed_df = summary_df.filter(F.col("status") != "PASS")
-failed_count = failed_df.count()
-
-if failed_count > 0:
-    print("WARNING: One or more Bronze ingest row-count checks need review.")
-    display(failed_df)
+if batch_docs == EXPECTED_ROWS:
+    print("PASS: MongoDB seeded document count matches expected count.")
 else:
-    print("All Bronze CSV row-count checks passed.")
+    print("CHECK: MongoDB seeded document count does not match expected count.")
 
-# -----------------------------------------------------------------------------
-# Show created Bronze tables
-# -----------------------------------------------------------------------------
+sample_doc = collection.find_one({"seed_batch_id": SEED_BATCH_ID})
 
-print("Created Bronze tables:")
-display(spark.sql(f"SHOW TABLES IN {BRONZE_SCHEMA}"))
+if sample_doc:
+    print("Sample document keys:")
+    print(sorted(sample_doc.keys()))
+
+    print("Sample event_id:", sample_doc.get("event_id"))
+    print("Sample raw_reading_id:", sample_doc.get("raw_reading_id"))
+    print("Sample meter_id:", sample_doc.get("meter_id"))
+    print("Sample facility_id:", sample_doc.get("facility_id"))
+    print("Sample source_system:", sample_doc.get("source_system"))
+    print("Sample polling_platform:", sample_doc.get("polling_platform"))
+else:
+    print("No sample document found for the seed batch.")
