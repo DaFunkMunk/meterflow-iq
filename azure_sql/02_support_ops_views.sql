@@ -1,0 +1,2 @@
+﻿-- Azure SQL support ops views placeholder.
+-- Create pipeline health, source-to-target reconciliation, exception backlog, failed loads, and RCA trend views.

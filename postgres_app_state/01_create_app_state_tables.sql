@@ -1,0 +1,2 @@
+﻿-- Azure Database for PostgreSQL app-state tables placeholder.
+-- Store Streamlit writeback: exception status, notes, assignments, AI review status, and audit history.

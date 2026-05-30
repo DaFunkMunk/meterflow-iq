@@ -1,0 +1,2 @@
+﻿-- Azure SQL support reporting mart placeholder.
+-- Create technical support/reliability tables.

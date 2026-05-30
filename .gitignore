@@ -1,0 +1,35 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets
+.env
+*.pem
+*.key
+*.crt
+*.json
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Generated heavy/local outputs
+data_output/
+delta_output/
+*.parquet
+*.delta
+*.log
+
+# Power BI local/temp files
+*.pbitmp

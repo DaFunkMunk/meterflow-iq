@@ -1,0 +1,2 @@
+﻿-- BigQuery setup placeholder.
+-- Create datasets/tables for Streamlit investigation data.

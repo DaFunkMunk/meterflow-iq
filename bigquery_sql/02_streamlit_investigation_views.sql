@@ -1,0 +1,2 @@
+﻿-- BigQuery Streamlit investigation views placeholder.
+-- Create pipeline health, exception, raw event context, and reconciliation views.

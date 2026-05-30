@@ -1,0 +1,2 @@
+﻿-- Snowflake business reporting schema placeholder.
+-- Create database/schema/tables for Business KPI Power BI dashboard.

@@ -1,0 +1,13 @@
+﻿pandas
+numpy
+pymongo
+dnspython
+python-dotenv
+pyspark
+streamlit
+google-cloud-bigquery
+sqlalchemy
+psycopg[binary]
+pyodbc
+snowflake-connector-python
+pytest

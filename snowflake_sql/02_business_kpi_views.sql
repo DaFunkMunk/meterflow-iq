@@ -1,0 +1,2 @@
+﻿-- Snowflake business KPI views placeholder.
+-- Create executive overview, facility trends, actual-vs-nominated, and reporting readiness views.
