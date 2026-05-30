@@ -67,33 +67,48 @@ CSV_SOURCES = {
 # Locate sample_data folder
 # -----------------------------------------------------------------------------
 
+def resolve_sample_data_dir() -> Path:
+    """
+    Resolve the sample_data folder from the Databricks Git folder.
+
+    In this repo, the notebook usually lives under:
+        /Workspace/Users/<user>/meterflow-iq/databricks_notebooks
+
+    The sample_data folder lives one level above:
+        /Workspace/Users/<user>/meterflow-iq/sample_data
+    """
+    cwd = Path(os.getcwd())
+
+    candidate_sample_dirs = [
+        cwd / "sample_data",
+        cwd.parent / "sample_data",
+        Path("/Workspace/Users/ngpend2@gmail.com/meterflow-iq/sample_data"),
+    ]
+
+    for path in candidate_sample_dirs:
+        exists = path.exists()
+        has_facility = (path / "facility_master.csv").exists()
+
+        print(
+            f"Checking: {path} | "
+            f"exists={exists} | "
+            f"has_facility_master={has_facility}"
+        )
+
+        if exists and has_facility:
+            return path
+
+    raise RuntimeError(
+        "Could not find sample_data/facility_master.csv from this notebook."
+    )
+
 print("Spark version:", spark.version)
 print("Current working directory:", os.getcwd())
 print("Bronze run ID:", BRONZE_RUN_ID)
 
-cwd = Path(os.getcwd())
+sample_dir_path: Path = resolve_sample_data_dir()
 
-candidate_sample_dirs = [
-    cwd / "sample_data",
-    cwd.parent / "sample_data",
-    Path("/Workspace/Users/ngpend2@gmail.com/meterflow-iq/sample_data"),
-]
-
-sample_dir = None
-
-for path in candidate_sample_dirs:
-    exists = path.exists()
-    has_facility = (path / "facility_master.csv").exists()
-    print(f"Checking: {path} | exists={exists} | has_facility_master={has_facility}")
-
-    if exists and has_facility:
-        sample_dir = path
-        break
-
-if sample_dir is None:
-    raise RuntimeError("Could not find sample_data/facility_master.csv from this notebook.")
-
-print(f"Using sample_data folder: {sample_dir}")
+print(f"Using sample_data folder: {sample_dir_path}")
 
 # -----------------------------------------------------------------------------
 # Create Bronze schema/database
@@ -112,33 +127,30 @@ def add_bronze_metadata(df, source_file: str, source_path: str):
     """
     Add standard Bronze metadata columns.
 
-    These columns help prove source-to-target lineage later.
+    Bronze should preserve raw source records with traceability metadata.
+
+    _record_hash is created from the raw row before metadata columns are added.
+    Using F.to_json(F.struct("*")) avoids repeatedly accessing df.columns inside
+    the function and keeps the editor/linter warning away.
     """
-    original_columns = df.columns
-
-    record_hash_expr = F.sha2(
-        F.concat_ws(
-            "||",
-            *[
-                F.coalesce(F.col(col_name).cast("string"), F.lit(""))
-                for col_name in original_columns
-            ],
-        ),
-        256,
-    )
-
     return (
         df
+        .withColumn(
+            "_record_hash",
+            F.sha2(F.to_json(F.struct("*")), 256)
+        )
         .withColumn("_bronze_run_id", F.lit(BRONZE_RUN_ID))
         .withColumn("_source_file", F.lit(source_file))
         .withColumn("_source_path", F.lit(source_path))
         .withColumn("_source_type", F.lit("csv"))
         .withColumn("_ingested_at", F.current_timestamp())
-        .withColumn("_record_hash", record_hash_expr)
     )
 
 def read_csv(source_file: str):
-    source_path = sample_dir / source_file
+    """
+    Read one source CSV from the sample_data folder.
+    """
+    source_path = sample_dir_path / source_file
     spark_path = f"file:{source_path}"
 
     return (
@@ -159,7 +171,7 @@ summary_rows = []
 for source_file, config in CSV_SOURCES.items():
     target_table = config["target_table"]
     expected_rows = config["expected_rows"]
-    source_path = sample_dir / source_file
+    source_path = sample_dir_path / source_file
 
     print("-" * 90)
     print(f"Reading source file: {source_file}")
@@ -187,7 +199,11 @@ for source_file, config in CSV_SOURCES.items():
 
     written_rows = spark.table(f"{BRONZE_SCHEMA}.{target_table}").count()
 
-    status = "PASS" if actual_rows == expected_rows and written_rows == expected_rows else "CHECK"
+    status = (
+        "PASS"
+        if actual_rows == expected_rows and written_rows == expected_rows
+        else "CHECK"
+    )
 
     summary_rows.append(
         {
