@@ -1,0 +1,21 @@
+rule_id,rule_name,layer,field_name,rule_type,condition_description,severity,business_reason,owner_team,active_flag
+DQ_NULL_VOLUME,Volume must not be null,Silver,volume,not_null,volume IS NOT NULL,High,Missing measurements can undercount or break downstream reporting.,Data Engineering,Y
+DQ_ZERO_VOLUME,Active meter zero-volume review,Silver,volume,conditional,volume = 0 for active meter requires review,Medium/High,Zero can be real or a source/polling issue.,Measurement,Y
+DQ_VOLUME_NON_NEGATIVE,Volume must not be negative,Silver,volume,range,volume >= 0,High,Negative volume is not valid for this simulated measurement.,Data Engineering,Y
+DQ_DUPLICATE_METER_TIMESTAMP,No duplicate meter timestamp,Silver,"meter_id,reading_timestamp",unique_grain,COUNT(*) by meter_id + reading_timestamp <= 1,High,Duplicates can inflate totals.,Data Engineering,Y
+DQ_METER_MUST_EXIST_IN_MASTER,Meter must exist in master,Silver,meter_id,relationship,meter_id exists in meter_master,High,Unmapped meters can disappear in reports.,Data Governance,Y
+DQ_FACILITY_MUST_MATCH_MASTER,Facility must match meter master,Silver,facility_id,relationship,raw facility_id matches meter_master facility_id,High,Bad mapping can move volumes to the wrong asset.,Data Governance,Y
+DQ_ACTIVE_METER_ONLY,Inactive meter reporting review,Silver,active_flag,conditional,active_flag = Y for reporting records,Medium/High,Inactive meters require effective-date review.,Measurement,Y
+DQ_QUALITY_CODE_VALID,Quality code accepted values,Silver,quality_code,accepted_values,"quality_code in GOOD, ESTIMATED, QUESTIONABLE, STALE, MISSING",Medium,Bad status mapping breaks interpretation.,Data Engineering,Y
+DQ_PRODUCTION_DATE_NOT_FUTURE,Production date cannot be future,Silver,production_date,date_window,production_date <= current_date,Medium,Future dates indicate source/date mapping issue.,Data Engineering,Y
+DQ_LATE_ARRIVAL,Load must meet reporting window,Silver,load_timestamp,timeliness,load_timestamp <= expected_report_refresh_time,Medium,Late data can cause reports to be wrong at refresh.,Application Support,Y
+DQ_STALE_READING,Reading freshness check,Silver,"reading_timestamp,quality_code",freshness,quality_code != STALE and reading is within expected interval,Medium/High,Stale values can look valid without context.,Operations,Y
+DQ_FLOWCAL_APPROVED_FOR_REPORTING,FlowCal record approved,Gold,"approved_flag,close_status",business_rule,approved_flag = Y and close_status = CLOSED,High,Unapproved measurements should not feed final reports.,Measurement,Y
+DQ_FLOWCAL_CORRECTION_VARIANCE,FlowCal correction variance,Gold,"measured_volume,corrected_volume",threshold,ABS(corrected - measured) / measured <= threshold,Medium/High,Large corrections require measurement review.,Measurement,Y
+DQ_NOMINATION_VARIANCE,Actual vs nomination variance threshold,Gold,"actual_volume,nominated_volume",threshold,variance within configured threshold,Medium,Business users need to understand plan-vs-actual differences.,Commercial,Y
+DQ_PIPELINE_RUN_SUCCESS,Pipeline run success check,Gold,status,status,"status in SUCCESS, RETRY_SUCCESS",High,Failed/partial loads affect downstream trust.,Application Support,Y
+DQ_ROWS_REJECTED_THRESHOLD,Rejected rows threshold,Gold,rows_rejected,threshold,rows_rejected <= configured threshold,Medium/High,Rejected rows need triage.,Application Support,Y
+DQ_SOURCE_SYSTEM_PRESENT,Source system must be populated,Bronze,source_system,not_null,source_system IS NOT NULL,Medium,Lineage depends on source metadata.,Data Governance,Y
+DQ_BATCH_ID_PRESENT,Batch ID must be populated,Bronze,batch_id,not_null,batch_id IS NOT NULL,Medium,Batch metadata supports reconciliation and reruns.,Data Engineering,Y
+DQ_POLL_TIMESTAMP_PRESENT,Poll timestamp must be populated,Bronze,poll_timestamp,not_null,poll_timestamp IS NOT NULL,Medium,Polling timestamp supports freshness checks.,Operations,Y
+DQ_RAW_PAYLOAD_PRESERVED,Raw event payload preservation,Bronze,raw_payload,auditability,raw payload preserved for MongoDB events,Medium,Raw context helps explain exceptions.,Data Governance,Y

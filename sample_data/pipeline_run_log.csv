@@ -1,0 +1,151 @@
+run_id,pipeline_name,source_file,started_at,completed_at,status,rows_read,rows_accepted,rows_rejected,error_count,warning_count,error_message,trigger_type,environment
+RUN-000001,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-01T02:01:00,2026-05-01T02:31:00,SUCCESS,153181,153170,11,0,10,,SCHEDULED,DEV
+RUN-000002,bronze_mongodb_event_ingest,meter_polling_events,2026-05-01T04:23:00,2026-05-01T04:35:00,FAILED,133567,131817,1750,10,8,Credential/token expired,SCHEDULED,DEV
+RUN-000003,silver_meter_validation,bronze_meter_readings,2026-05-01T01:14:00,2026-05-01T01:40:00,SUCCESS,6367,6359,8,0,5,,SCHEDULED,DEV
+RUN-000004,gold_facility_daily_kpi,silver_validated_readings,2026-05-01T02:01:00,2026-05-01T02:38:00,PARTIAL_SUCCESS,9277,8886,391,1,12,Partial load: rejected rows exceeded warning threshold.,SCHEDULED,DEV
+RUN-000005,publish_bigquery_streamlit,gold_investigation_tables,2026-05-01T04:05:00,2026-05-01T04:40:00,SUCCESS,22302,22293,9,0,0,,SCHEDULED,DEV
+RUN-000006,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-02T05:38:00,2026-05-02T06:06:00,RETRY_SUCCESS,121019,120997,22,3,9,Initial attempt failed; retry completed successfully.,SCHEDULED,DEV
+RUN-000007,bronze_mongodb_event_ingest,meter_polling_events,2026-05-02T01:15:00,2026-05-02T01:21:00,SUCCESS,62119,62103,16,0,1,,SCHEDULED,DEV
+RUN-000008,silver_meter_validation,bronze_meter_readings,2026-05-02T01:01:00,2026-05-02T01:27:00,SUCCESS,10246,10227,19,0,9,,SCHEDULED,DEV
+RUN-000009,gold_facility_daily_kpi,silver_validated_readings,2026-05-02T03:13:00,2026-05-02T03:26:00,RETRY_SUCCESS,2605,2536,69,3,10,Initial attempt failed; retry completed successfully.,SCHEDULED,DEV
+RUN-000010,publish_bigquery_streamlit,gold_investigation_tables,2026-05-02T02:31:00,2026-05-02T03:04:00,SUCCESS,12789,12778,11,0,3,,SCHEDULED,DEV
+RUN-000011,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-03T05:27:00,2026-05-03T05:35:00,SUCCESS,128225,128215,10,0,3,,SCHEDULED,DEV
+RUN-000012,bronze_mongodb_event_ingest,meter_polling_events,2026-05-03T02:09:00,2026-05-03T02:46:00,SUCCESS,107056,107037,19,0,11,,SCHEDULED,DEV
+RUN-000013,silver_meter_validation,bronze_meter_readings,2026-05-03T03:08:00,2026-05-03T03:14:00,SUCCESS,18424,18414,10,0,0,,SCHEDULED,DEV
+RUN-000014,gold_facility_daily_kpi,silver_validated_readings,2026-05-03T02:43:00,2026-05-03T02:48:00,SUCCESS,19600,19578,22,0,9,,SCHEDULED,DEV
+RUN-000015,publish_bigquery_streamlit,gold_investigation_tables,2026-05-03T01:16:00,2026-05-03T01:34:00,SUCCESS,1054,1035,19,0,7,,SCHEDULED,DEV
+RUN-000016,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-04T01:24:00,2026-05-04T01:58:00,RETRY_SUCCESS,115041,115024,17,1,12,Initial attempt failed; retry completed successfully.,RETRY,DEV
+RUN-000017,bronze_mongodb_event_ingest,meter_polling_events,2026-05-04T04:02:00,2026-05-04T04:08:00,SUCCESS,89970,89966,4,0,9,,SCHEDULED,DEV
+RUN-000018,silver_meter_validation,bronze_meter_readings,2026-05-04T04:00:00,2026-05-04T04:37:00,SUCCESS,12015,12000,15,0,0,,MANUAL,DEV
+RUN-000019,gold_facility_daily_kpi,silver_validated_readings,2026-05-04T03:40:00,2026-05-04T04:17:00,FAILED,23299,23279,20,0,6,Scenario-seeded failure for demo.,SCHEDULED,DEV
+RUN-000020,publish_bigquery_streamlit,gold_investigation_tables,2026-05-04T02:00:00,2026-05-04T02:28:00,SUCCESS,22610,22595,15,0,8,,SCHEDULED,DEV
+RUN-000021,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-05T03:07:00,2026-05-05T03:15:00,SUCCESS,126100,126096,4,0,3,,SCHEDULED,DEV
+RUN-000022,bronze_mongodb_event_ingest,meter_polling_events,2026-05-05T01:16:00,2026-05-05T01:20:00,SUCCESS,119381,119364,17,0,9,,SCHEDULED,DEV
+RUN-000023,silver_meter_validation,bronze_meter_readings,2026-05-05T01:30:00,2026-05-05T01:46:00,SUCCESS,16159,16138,21,0,2,,SCHEDULED,DEV
+RUN-000024,gold_facility_daily_kpi,silver_validated_readings,2026-05-05T01:27:00,2026-05-05T01:36:00,SUCCESS,5358,5347,11,0,1,,SCHEDULED,DEV
+RUN-000025,publish_bigquery_streamlit,gold_investigation_tables,2026-05-05T05:34:00,2026-05-05T05:58:00,SUCCESS,2815,2792,23,0,6,,SCHEDULED,DEV
+RUN-000026,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-06T02:24:00,2026-05-06T02:39:00,SUCCESS,34906,34901,5,0,8,,SCHEDULED,DEV
+RUN-000027,bronze_mongodb_event_ingest,meter_polling_events,2026-05-06T05:34:00,2026-05-06T05:38:00,SUCCESS,106896,106886,10,0,8,,SCHEDULED,DEV
+RUN-000028,silver_meter_validation,bronze_meter_readings,2026-05-06T03:15:00,2026-05-06T03:39:00,SUCCESS,13696,13694,2,0,5,,SCHEDULED,DEV
+RUN-000029,gold_facility_daily_kpi,silver_validated_readings,2026-05-06T04:24:00,2026-05-06T04:28:00,PARTIAL_SUCCESS,14806,14596,210,2,29,Partial load: rejected rows exceeded warning threshold.,SCHEDULED,DEV
+RUN-000030,publish_bigquery_streamlit,gold_investigation_tables,2026-05-06T05:11:00,2026-05-06T05:41:00,SUCCESS,15847,15835,12,0,6,,RETRY,DEV
+RUN-000031,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-07T05:01:00,2026-05-07T05:18:00,RETRY_SUCCESS,92943,92916,27,2,9,Initial attempt failed; retry completed successfully.,SCHEDULED,DEV
+RUN-000032,bronze_mongodb_event_ingest,meter_polling_events,2026-05-07T03:38:00,2026-05-07T03:51:00,SUCCESS,145848,145824,24,0,8,,RETRY,DEV
+RUN-000033,silver_meter_validation,bronze_meter_readings,2026-05-07T05:31:00,2026-05-07T05:58:00,SUCCESS,12781,12777,4,0,8,,SCHEDULED,DEV
+RUN-000034,gold_facility_daily_kpi,silver_validated_readings,2026-05-07T04:27:00,2026-05-07T05:01:00,SUCCESS,24000,23980,20,0,4,,SCHEDULED,DEV
+RUN-000035,publish_bigquery_streamlit,gold_investigation_tables,2026-05-07T05:43:00,2026-05-07T06:13:00,FAILED,4428,2632,1796,6,34,Rejected rows above threshold,SCHEDULED,DEV
+RUN-000036,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-08T03:12:00,2026-05-08T03:30:00,SUCCESS,155909,155899,10,0,0,,RETRY,DEV
+RUN-000037,bronze_mongodb_event_ingest,meter_polling_events,2026-05-08T05:35:00,2026-05-08T05:57:00,SUCCESS,168052,168052,0,0,0,,SCHEDULED,DEV
+RUN-000038,silver_meter_validation,bronze_meter_readings,2026-05-08T05:08:00,2026-05-08T05:42:00,SUCCESS,16995,16991,4,0,11,,RETRY,DEV
+RUN-000039,gold_facility_daily_kpi,silver_validated_readings,2026-05-08T05:20:00,2026-05-08T05:38:00,SUCCESS,8302,8300,2,0,0,,RETRY,DEV
+RUN-000040,publish_bigquery_streamlit,gold_investigation_tables,2026-05-08T01:26:00,2026-05-08T01:38:00,PARTIAL_SUCCESS,5362,4504,858,7,27,Partial load: rejected rows exceeded warning threshold.,SCHEDULED,DEV
+RUN-000041,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-09T03:21:00,2026-05-09T03:39:00,SUCCESS,143576,143566,10,0,6,,MANUAL,DEV
+RUN-000042,bronze_mongodb_event_ingest,meter_polling_events,2026-05-09T03:29:00,2026-05-09T03:56:00,SUCCESS,3322,3311,11,0,10,,SCHEDULED,DEV
+RUN-000043,silver_meter_validation,bronze_meter_readings,2026-05-09T02:09:00,2026-05-09T02:45:00,SUCCESS,22770,22748,22,0,2,,SCHEDULED,DEV
+RUN-000044,gold_facility_daily_kpi,silver_validated_readings,2026-05-09T05:35:00,2026-05-09T05:58:00,SUCCESS,19221,19214,7,0,0,,SCHEDULED,DEV
+RUN-000045,publish_bigquery_streamlit,gold_investigation_tables,2026-05-09T05:11:00,2026-05-09T05:40:00,SUCCESS,17056,17050,6,0,6,,SCHEDULED,DEV
+RUN-000046,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-10T04:34:00,2026-05-10T04:38:00,SUCCESS,112325,112311,14,0,2,,SCHEDULED,DEV
+RUN-000047,bronze_mongodb_event_ingest,meter_polling_events,2026-05-10T02:08:00,2026-05-10T02:14:00,RETRY_SUCCESS,30520,30480,40,2,2,Initial attempt failed; retry completed successfully.,RETRY,DEV
+RUN-000048,silver_meter_validation,bronze_meter_readings,2026-05-10T02:12:00,2026-05-10T02:28:00,SUCCESS,8595,8588,7,0,11,,SCHEDULED,DEV
+RUN-000049,gold_facility_daily_kpi,silver_validated_readings,2026-05-10T04:12:00,2026-05-10T04:40:00,PARTIAL_SUCCESS,17561,17264,297,3,25,Partial load: rejected rows exceeded warning threshold.,SCHEDULED,DEV
+RUN-000050,publish_bigquery_streamlit,gold_investigation_tables,2026-05-10T03:35:00,2026-05-10T03:38:00,SUCCESS,9822,9817,5,0,3,,SCHEDULED,DEV
+RUN-000051,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-11T05:35:00,2026-05-11T06:05:00,SUCCESS,15430,15413,17,0,1,,SCHEDULED,DEV
+RUN-000052,bronze_mongodb_event_ingest,meter_polling_events,2026-05-11T03:29:00,2026-05-11T03:49:00,SUCCESS,130350,130344,6,0,8,,MANUAL,DEV
+RUN-000053,silver_meter_validation,bronze_meter_readings,2026-05-11T04:10:00,2026-05-11T04:35:00,SUCCESS,23777,23762,15,0,8,,RETRY,DEV
+RUN-000054,gold_facility_daily_kpi,silver_validated_readings,2026-05-11T04:14:00,2026-05-11T04:44:00,SUCCESS,8405,8389,16,0,11,,SCHEDULED,DEV
+RUN-000055,publish_bigquery_streamlit,gold_investigation_tables,2026-05-11T05:14:00,2026-05-11T05:38:00,SUCCESS,15505,15502,3,0,4,,SCHEDULED,DEV
+RUN-000056,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-12T03:17:00,2026-05-12T03:40:00,SUCCESS,63612,63607,5,0,2,,SCHEDULED,DEV
+RUN-000057,bronze_mongodb_event_ingest,meter_polling_events,2026-05-12T03:02:00,2026-05-12T03:23:00,SUCCESS,191270,191247,23,0,5,,SCHEDULED,DEV
+RUN-000058,silver_meter_validation,bronze_meter_readings,2026-05-12T02:42:00,2026-05-12T03:10:00,SUCCESS,23211,23196,15,0,0,,SCHEDULED,DEV
+RUN-000059,gold_facility_daily_kpi,silver_validated_readings,2026-05-12T03:33:00,2026-05-12T03:43:00,SUCCESS,20151,20137,14,0,4,,SCHEDULED,DEV
+RUN-000060,publish_bigquery_streamlit,gold_investigation_tables,2026-05-12T05:25:00,2026-05-12T06:02:00,SUCCESS,15757,15750,7,0,6,,SCHEDULED,DEV
+RUN-000061,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-13T01:18:00,2026-05-13T01:44:00,SUCCESS,46387,46366,21,0,11,,RETRY,DEV
+RUN-000062,bronze_mongodb_event_ingest,meter_polling_events,2026-05-13T01:40:00,2026-05-13T01:59:00,SUCCESS,158643,158630,13,0,0,,SCHEDULED,DEV
+RUN-000063,silver_meter_validation,bronze_meter_readings,2026-05-13T02:17:00,2026-05-13T02:23:00,SUCCESS,4791,4791,0,0,0,,SCHEDULED,DEV
+RUN-000064,gold_facility_daily_kpi,silver_validated_readings,2026-05-13T05:33:00,2026-05-13T05:43:00,SUCCESS,21367,21367,0,0,0,,SCHEDULED,DEV
+RUN-000065,publish_bigquery_streamlit,gold_investigation_tables,2026-05-13T04:24:00,2026-05-13T04:54:00,FAILED,7051,6373,678,10,16,Schema mismatch,RETRY,DEV
+RUN-000066,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-14T01:25:00,2026-05-14T01:50:00,SUCCESS,137066,137061,5,0,2,,MANUAL,DEV
+RUN-000067,bronze_mongodb_event_ingest,meter_polling_events,2026-05-14T03:22:00,2026-05-14T03:33:00,SUCCESS,136257,136255,2,0,7,,SCHEDULED,DEV
+RUN-000068,silver_meter_validation,bronze_meter_readings,2026-05-14T02:30:00,2026-05-14T02:39:00,SUCCESS,8017,7998,19,0,9,,SCHEDULED,DEV
+RUN-000069,gold_facility_daily_kpi,silver_validated_readings,2026-05-14T01:29:00,2026-05-14T01:35:00,PARTIAL_SUCCESS,5910,5515,395,3,9,Partial load: rejected rows exceeded warning threshold.,SCHEDULED,DEV
+RUN-000070,publish_bigquery_streamlit,gold_investigation_tables,2026-05-14T05:15:00,2026-05-14T05:25:00,SUCCESS,19793,19776,17,0,10,,SCHEDULED,DEV
+RUN-000071,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-15T04:08:00,2026-05-15T04:11:00,SUCCESS,128998,128993,5,0,4,,SCHEDULED,DEV
+RUN-000072,bronze_mongodb_event_ingest,meter_polling_events,2026-05-15T03:00:00,2026-05-15T03:32:00,SUCCESS,14308,14299,9,0,7,,SCHEDULED,DEV
+RUN-000073,silver_meter_validation,bronze_meter_readings,2026-05-15T02:14:00,2026-05-15T02:23:00,SUCCESS,22854,22850,4,0,5,,SCHEDULED,DEV
+RUN-000074,gold_facility_daily_kpi,silver_validated_readings,2026-05-15T03:34:00,2026-05-15T03:45:00,FAILED,6747,6726,21,0,1,Scenario-seeded failure for demo.,SCHEDULED,DEV
+RUN-000075,publish_bigquery_streamlit,gold_investigation_tables,2026-05-15T03:24:00,2026-05-15T03:46:00,SUCCESS,17015,16997,18,0,4,,SCHEDULED,DEV
+RUN-000076,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-16T01:36:00,2026-05-16T01:51:00,SUCCESS,129703,129693,10,0,7,,SCHEDULED,DEV
+RUN-000077,bronze_mongodb_event_ingest,meter_polling_events,2026-05-16T03:00:00,2026-05-16T03:09:00,PARTIAL_SUCCESS,53584,53580,4,0,6,Scenario-seeded partial load for demo.,SCHEDULED,DEV
+RUN-000078,silver_meter_validation,bronze_meter_readings,2026-05-16T02:43:00,2026-05-16T03:14:00,SUCCESS,10123,10115,8,0,4,,RETRY,DEV
+RUN-000079,gold_facility_daily_kpi,silver_validated_readings,2026-05-16T04:26:00,2026-05-16T04:51:00,PARTIAL_SUCCESS,24273,24257,16,0,1,Scenario-seeded partial load for demo.,SCHEDULED,DEV
+RUN-000080,publish_bigquery_streamlit,gold_investigation_tables,2026-05-16T04:35:00,2026-05-16T04:42:00,SUCCESS,8918,8910,8,0,5,,SCHEDULED,DEV
+RUN-000081,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-17T01:03:00,2026-05-17T01:11:00,SUCCESS,165532,165521,11,0,10,,SCHEDULED,DEV
+RUN-000082,bronze_mongodb_event_ingest,meter_polling_events,2026-05-17T03:30:00,2026-05-17T03:50:00,SUCCESS,16179,16171,8,0,11,,SCHEDULED,DEV
+RUN-000083,silver_meter_validation,bronze_meter_readings,2026-05-17T01:19:00,2026-05-17T01:39:00,SUCCESS,967,963,4,0,9,,SCHEDULED,DEV
+RUN-000084,gold_facility_daily_kpi,silver_validated_readings,2026-05-17T03:38:00,2026-05-17T04:07:00,SUCCESS,17934,17918,16,0,0,,SCHEDULED,DEV
+RUN-000085,publish_bigquery_streamlit,gold_investigation_tables,2026-05-17T02:03:00,2026-05-17T02:36:00,SUCCESS,5862,5851,11,0,3,,SCHEDULED,DEV
+RUN-000086,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-18T03:16:00,2026-05-18T03:47:00,SUCCESS,23533,23518,15,0,11,,SCHEDULED,DEV
+RUN-000087,bronze_mongodb_event_ingest,meter_polling_events,2026-05-18T01:31:00,2026-05-18T01:55:00,SUCCESS,21239,21235,4,0,3,,MANUAL,DEV
+RUN-000088,silver_meter_validation,bronze_meter_readings,2026-05-18T05:04:00,2026-05-18T05:16:00,SUCCESS,2564,2540,24,0,6,,SCHEDULED,DEV
+RUN-000089,gold_facility_daily_kpi,silver_validated_readings,2026-05-18T01:23:00,2026-05-18T01:49:00,SUCCESS,2285,2278,7,0,1,,SCHEDULED,DEV
+RUN-000090,publish_bigquery_streamlit,gold_investigation_tables,2026-05-18T02:24:00,2026-05-18T02:45:00,SUCCESS,24925,24902,23,0,4,,SCHEDULED,DEV
+RUN-000091,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-19T02:23:00,2026-05-19T02:50:00,SUCCESS,180491,180486,5,0,3,,SCHEDULED,DEV
+RUN-000092,bronze_mongodb_event_ingest,meter_polling_events,2026-05-19T04:44:00,2026-05-19T05:19:00,SUCCESS,93368,93368,0,0,10,,SCHEDULED,DEV
+RUN-000093,silver_meter_validation,bronze_meter_readings,2026-05-19T03:14:00,2026-05-19T03:27:00,SUCCESS,7201,7179,22,0,5,,SCHEDULED,DEV
+RUN-000094,gold_facility_daily_kpi,silver_validated_readings,2026-05-19T04:01:00,2026-05-19T04:11:00,SUCCESS,19519,19503,16,0,2,,SCHEDULED,DEV
+RUN-000095,publish_bigquery_streamlit,gold_investigation_tables,2026-05-19T05:06:00,2026-05-19T05:40:00,SUCCESS,7954,7938,16,0,9,,SCHEDULED,DEV
+RUN-000096,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-20T01:38:00,2026-05-20T02:09:00,SUCCESS,138554,138532,22,0,8,,SCHEDULED,DEV
+RUN-000097,bronze_mongodb_event_ingest,meter_polling_events,2026-05-20T05:04:00,2026-05-20T05:35:00,SUCCESS,87519,87505,14,0,4,,SCHEDULED,DEV
+RUN-000098,silver_meter_validation,bronze_meter_readings,2026-05-20T02:12:00,2026-05-20T02:36:00,PARTIAL_SUCCESS,24851,24666,185,5,20,Partial load: rejected rows exceeded warning threshold.,SCHEDULED,DEV
+RUN-000099,gold_facility_daily_kpi,silver_validated_readings,2026-05-20T05:29:00,2026-05-20T05:41:00,SUCCESS,22082,22060,22,0,11,,SCHEDULED,DEV
+RUN-000100,publish_bigquery_streamlit,gold_investigation_tables,2026-05-20T03:18:00,2026-05-20T03:47:00,SUCCESS,9806,9793,13,0,5,,SCHEDULED,DEV
+RUN-000101,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-21T01:30:00,2026-05-21T01:57:00,FAILED,113260,110934,2326,4,17,Target write failure,SCHEDULED,DEV
+RUN-000102,bronze_mongodb_event_ingest,meter_polling_events,2026-05-21T05:27:00,2026-05-21T06:00:00,SUCCESS,44083,44059,24,0,8,,SCHEDULED,DEV
+RUN-000103,silver_meter_validation,bronze_meter_readings,2026-05-21T04:05:00,2026-05-21T04:10:00,SUCCESS,20669,20662,7,0,0,,MANUAL,DEV
+RUN-000104,gold_facility_daily_kpi,silver_validated_readings,2026-05-21T02:03:00,2026-05-21T02:12:00,SUCCESS,23108,23094,14,0,2,,SCHEDULED,DEV
+RUN-000105,publish_bigquery_streamlit,gold_investigation_tables,2026-05-21T02:38:00,2026-05-21T02:59:00,SUCCESS,19558,19556,2,0,2,,SCHEDULED,DEV
+RUN-000106,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-22T04:02:00,2026-05-22T04:15:00,SUCCESS,96379,96362,17,0,9,,SCHEDULED,DEV
+RUN-000107,bronze_mongodb_event_ingest,meter_polling_events,2026-05-22T01:28:00,2026-05-22T01:32:00,PARTIAL_SUCCESS,198182,197503,679,3,17,Partial load: rejected rows exceeded warning threshold.,SCHEDULED,DEV
+RUN-000108,silver_meter_validation,bronze_meter_readings,2026-05-22T01:02:00,2026-05-22T01:21:00,SUCCESS,10081,10058,23,0,5,,SCHEDULED,DEV
+RUN-000109,gold_facility_daily_kpi,silver_validated_readings,2026-05-22T05:42:00,2026-05-22T06:00:00,SUCCESS,13429,13429,0,0,11,,MANUAL,DEV
+RUN-000110,publish_bigquery_streamlit,gold_investigation_tables,2026-05-22T04:23:00,2026-05-22T04:53:00,SUCCESS,13247,13235,12,0,4,,SCHEDULED,DEV
+RUN-000111,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-23T04:19:00,2026-05-23T04:28:00,SUCCESS,68982,68963,19,0,4,,SCHEDULED,DEV
+RUN-000112,bronze_mongodb_event_ingest,meter_polling_events,2026-05-23T03:05:00,2026-05-23T03:33:00,SUCCESS,49422,49417,5,0,5,,SCHEDULED,DEV
+RUN-000113,silver_meter_validation,bronze_meter_readings,2026-05-23T04:31:00,2026-05-23T04:59:00,SUCCESS,4268,4266,2,0,3,,SCHEDULED,DEV
+RUN-000114,gold_facility_daily_kpi,silver_validated_readings,2026-05-23T03:04:00,2026-05-23T03:24:00,SUCCESS,19722,19722,0,0,7,,SCHEDULED,DEV
+RUN-000115,publish_bigquery_streamlit,gold_investigation_tables,2026-05-23T05:42:00,2026-05-23T06:03:00,SUCCESS,6598,6585,13,0,8,,SCHEDULED,DEV
+RUN-000116,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-24T02:44:00,2026-05-24T02:58:00,SUCCESS,103660,103658,2,0,9,,SCHEDULED,DEV
+RUN-000117,bronze_mongodb_event_ingest,meter_polling_events,2026-05-24T04:10:00,2026-05-24T04:44:00,SUCCESS,188228,188227,1,0,4,,SCHEDULED,DEV
+RUN-000118,silver_meter_validation,bronze_meter_readings,2026-05-24T03:26:00,2026-05-24T03:43:00,SUCCESS,19447,19426,21,0,0,,SCHEDULED,DEV
+RUN-000119,gold_facility_daily_kpi,silver_validated_readings,2026-05-24T03:12:00,2026-05-24T03:17:00,PARTIAL_SUCCESS,6571,6563,8,0,8,Scenario-seeded partial load for demo.,MANUAL,DEV
+RUN-000120,publish_bigquery_streamlit,gold_investigation_tables,2026-05-24T02:23:00,2026-05-24T02:41:00,SUCCESS,17419,17398,21,0,4,,MANUAL,DEV
+RUN-000121,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-25T04:33:00,2026-05-25T04:42:00,SUCCESS,159918,159906,12,0,8,,SCHEDULED,DEV
+RUN-000122,bronze_mongodb_event_ingest,meter_polling_events,2026-05-25T01:43:00,2026-05-25T01:53:00,SUCCESS,150265,150264,1,0,3,,SCHEDULED,DEV
+RUN-000123,silver_meter_validation,bronze_meter_readings,2026-05-25T02:21:00,2026-05-25T02:37:00,SUCCESS,8843,8826,17,0,11,,SCHEDULED,DEV
+RUN-000124,gold_facility_daily_kpi,silver_validated_readings,2026-05-25T04:16:00,2026-05-25T04:46:00,SUCCESS,13444,13432,12,0,0,,SCHEDULED,DEV
+RUN-000125,publish_bigquery_streamlit,gold_investigation_tables,2026-05-25T05:00:00,2026-05-25T05:28:00,SUCCESS,5629,5614,15,0,2,,SCHEDULED,DEV
+RUN-000126,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-26T05:44:00,2026-05-26T06:21:00,SUCCESS,166872,166864,8,0,8,,SCHEDULED,DEV
+RUN-000127,bronze_mongodb_event_ingest,meter_polling_events,2026-05-26T01:32:00,2026-05-26T01:50:00,SUCCESS,190045,190029,16,0,4,,SCHEDULED,DEV
+RUN-000128,silver_meter_validation,bronze_meter_readings,2026-05-26T05:38:00,2026-05-26T06:00:00,SUCCESS,12521,12505,16,0,10,,SCHEDULED,DEV
+RUN-000129,gold_facility_daily_kpi,silver_validated_readings,2026-05-26T02:38:00,2026-05-26T02:47:00,SUCCESS,17598,17585,13,0,1,,SCHEDULED,DEV
+RUN-000130,publish_bigquery_streamlit,gold_investigation_tables,2026-05-26T04:07:00,2026-05-26T04:15:00,FAILED,23087,22445,642,3,33,Rejected rows above threshold,SCHEDULED,DEV
+RUN-000131,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-27T01:29:00,2026-05-27T01:39:00,SUCCESS,28191,28180,11,0,6,,RETRY,DEV
+RUN-000132,bronze_mongodb_event_ingest,meter_polling_events,2026-05-27T04:20:00,2026-05-27T04:39:00,SUCCESS,184485,184462,23,0,1,,SCHEDULED,DEV
+RUN-000133,silver_meter_validation,bronze_meter_readings,2026-05-27T01:34:00,2026-05-27T01:40:00,SUCCESS,9392,9380,12,0,6,,SCHEDULED,DEV
+RUN-000134,gold_facility_daily_kpi,silver_validated_readings,2026-05-27T05:28:00,2026-05-27T05:49:00,SUCCESS,22716,22709,7,0,0,,SCHEDULED,DEV
+RUN-000135,publish_bigquery_streamlit,gold_investigation_tables,2026-05-27T03:34:00,2026-05-27T03:57:00,PARTIAL_SUCCESS,2705,1840,865,1,13,Partial load: rejected rows exceeded warning threshold.,SCHEDULED,DEV
+RUN-000136,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-28T03:17:00,2026-05-28T03:51:00,SUCCESS,138686,138683,3,0,11,,SCHEDULED,DEV
+RUN-000137,bronze_mongodb_event_ingest,meter_polling_events,2026-05-28T02:01:00,2026-05-28T02:24:00,SUCCESS,107380,107370,10,0,9,,RETRY,DEV
+RUN-000138,silver_meter_validation,bronze_meter_readings,2026-05-28T05:03:00,2026-05-28T05:38:00,SUCCESS,15809,15809,0,0,11,,MANUAL,DEV
+RUN-000139,gold_facility_daily_kpi,silver_validated_readings,2026-05-28T04:37:00,2026-05-28T04:43:00,FAILED,18878,16910,1968,11,14,Rejected rows above threshold,SCHEDULED,DEV
+RUN-000140,publish_bigquery_streamlit,gold_investigation_tables,2026-05-28T02:02:00,2026-05-28T02:09:00,RETRY_SUCCESS,24004,23944,60,2,4,Initial attempt failed; retry completed successfully.,RETRY,DEV
+RUN-000141,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-29T04:17:00,2026-05-29T04:26:00,SUCCESS,127033,127029,4,0,11,,SCHEDULED,DEV
+RUN-000142,bronze_mongodb_event_ingest,meter_polling_events,2026-05-29T03:32:00,2026-05-29T03:40:00,SUCCESS,71683,71661,22,0,6,,SCHEDULED,DEV
+RUN-000143,silver_meter_validation,bronze_meter_readings,2026-05-29T04:16:00,2026-05-29T04:45:00,SUCCESS,5887,5886,1,0,11,,SCHEDULED,DEV
+RUN-000144,gold_facility_daily_kpi,silver_validated_readings,2026-05-29T01:25:00,2026-05-29T01:36:00,SUCCESS,18679,18676,3,0,9,,SCHEDULED,DEV
+RUN-000145,publish_bigquery_streamlit,gold_investigation_tables,2026-05-29T03:03:00,2026-05-29T03:33:00,SUCCESS,1277,1254,23,0,6,,SCHEDULED,DEV
+RUN-000146,bronze_raw_polling_ingest,raw_polling_readings.csv,2026-05-30T05:29:00,2026-05-30T05:55:00,SUCCESS,197962,197948,14,0,8,,SCHEDULED,DEV
+RUN-000147,bronze_mongodb_event_ingest,meter_polling_events,2026-05-30T03:20:00,2026-05-30T03:41:00,SUCCESS,162254,162234,20,0,5,,SCHEDULED,DEV
+RUN-000148,silver_meter_validation,bronze_meter_readings,2026-05-30T03:03:00,2026-05-30T03:17:00,SUCCESS,5217,5205,12,0,1,,SCHEDULED,DEV
+RUN-000149,gold_facility_daily_kpi,silver_validated_readings,2026-05-30T04:43:00,2026-05-30T04:52:00,SUCCESS,21549,21540,9,0,3,,SCHEDULED,DEV
+RUN-000150,publish_bigquery_streamlit,gold_investigation_tables,2026-05-30T02:32:00,2026-05-30T02:45:00,SUCCESS,10496,10493,3,0,3,,RETRY,DEV
