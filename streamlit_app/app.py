@@ -1,8 +1,113 @@
-﻿"""MeterFlow IQ Streamlit Command Center."""
+﻿"""
+MeterFlow IQ - Streamlit Command Center
+
+Main landing page.
+
+The Streamlit app reads curated BigQuery views produced by the Databricks
+Gold publisher. It is the support analyst investigation surface for pipeline
+health, exceptions, reconciliation, facility KPIs, and RCA context.
+"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
 
 import streamlit as st
 
-st.set_page_config(page_title="MeterFlow IQ", layout="wide")
 
-st.title("MeterFlow IQ Command Center")
-st.info("TODO: Build Streamlit investigation command center backed by BigQuery.")
+# Make streamlit_app/utils importable from app and pages.
+APP_DIR = Path(__file__).resolve().parent
+if str(APP_DIR) not in sys.path:
+    sys.path.insert(0, str(APP_DIR))
+
+from utils.bigquery_client import get_environment_label, token_present
+
+
+st.set_page_config(
+    page_title="MeterFlow IQ - Command Center",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+st.title("MeterFlow IQ - Command Center")
+st.caption(
+    "Operational data quality command center powered by Databricks Gold outputs "
+    "published to BigQuery."
+)
+
+st.info(get_environment_label())
+
+if token_present():
+    st.success("BigQuery token is configured for this local session.")
+else:
+    st.warning(
+        "GCP_ACCESS_TOKEN is not configured. Generate a fresh token in Google Cloud "
+        "Shell and add it to your local .env file."
+    )
+
+st.markdown(
+    """
+### What this app is for
+
+MeterFlow IQ is a support analyst command center. It helps answer:
+
+- Is the data pipeline healthy?
+- Which facilities, meters, and dates have data-quality exceptions?
+- Did records change, disappear, duplicate, or arrive late?
+- Are business volume trends real or data-quality driven?
+- What facts should an RCA helper summarize?
+
+### Current app sections
+
+Use the left navigation to open:
+
+1. **Pipeline Health** — latest pipeline status, run history, failures, partial loads, and rejected rows.
+2. **Exceptions** — data-quality exception triage by facility, meter, rule, severity, source system, and date.
+3. **Raw Event Explorer** — MongoDB-derived device/communication/source context.
+4. **Reconciliation** — source-to-target row-count checkpoints.
+5. **AI RCA Helper** — facts-only RCA summary scaffold.
+
+### Current authentication note
+
+This local MVP uses a temporary Google access token in `.env`.
+
+If BigQuery errors after about an hour, refresh the token in Google Cloud Shell:
+"""
+)
+
+st.code(
+    "gcloud auth print-access-token",
+    language="bash",
+)
+
+st.markdown(
+    """
+Then update your local `.env` file:
+"""
+)
+
+st.code(
+    "GCP_ACCESS_TOKEN=...",
+    language="text",
+)
+
+st.markdown(
+    """
+Finally, restart Streamlit.
+"""
+)
+
+st.divider()
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric("Pipeline path", "Databricks → BigQuery")
+
+with col2:
+    st.metric("Investigation source", "BigQuery views")
+
+with col3:
+    st.metric("Writeback", "Planned")
