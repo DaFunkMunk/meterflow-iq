@@ -490,3 +490,4 @@ def clear_bigquery_cache() -> None:
 clear_bq_cache = clear_bigquery_cache
 clear_cache = clear_bigquery_cache
 refresh_bigquery_cache = clear_bigquery_cache
+clear_streamlit_caches = clear_bigquery_cache
