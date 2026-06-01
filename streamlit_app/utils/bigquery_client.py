@@ -260,6 +260,54 @@ def is_temporary_token_mode() -> bool:
     """
     return get_bigquery_auth_mode() == "temporary_access_token"
 
+def get_environment_label() -> str:
+    """
+    Return a short environment/auth label for the Streamlit UI.
+
+    Backward-compatible helper used by streamlit_app/app.py.
+    """
+    auth_mode = get_bigquery_auth_mode()
+
+    if os.getenv("K_SERVICE"):
+        runtime_label = "Cloud Run"
+    else:
+        runtime_label = "Local"
+
+    if auth_mode == "application_default_credentials":
+        return f"{runtime_label} / ADC"
+
+    if auth_mode == "streamlit_service_account_secret":
+        return f"{runtime_label} / Streamlit service account secret"
+
+    if auth_mode == "temporary_access_token":
+        return f"{runtime_label} / temporary access token"
+
+    return f"{runtime_label} / auth unresolved"
+
+
+def token_present() -> bool:
+    """
+    Return whether BigQuery authentication appears available.
+
+    Backward-compatible helper used by streamlit_app/app.py.
+
+    Historical meaning:
+        True when GCP_ACCESS_TOKEN was configured.
+
+    New meaning:
+        True when any supported BigQuery auth path is available:
+        - Cloud Run / local Application Default Credentials
+        - Streamlit service account secret
+        - temporary GCP_ACCESS_TOKEN fallback
+    """
+    auth_mode = get_bigquery_auth_mode()
+
+    return auth_mode in {
+        "application_default_credentials",
+        "streamlit_service_account_secret",
+        "temporary_access_token",
+    }
+
 
 # -----------------------------------------------------------------------------
 # BigQuery client and query helpers
