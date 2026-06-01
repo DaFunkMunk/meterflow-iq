@@ -12,3 +12,5 @@ pyodbc
 snowflake-connector-python
 pytest
 plotly>=5.24.0,<7
+db-dtypes>=1.4.0,<2
+pyarrow>=17.0.0,<20
