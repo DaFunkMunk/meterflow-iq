@@ -37,14 +37,17 @@ st.caption(
     "published to BigQuery."
 )
 
-st.info(get_environment_label())
+st.info(f"BigQuery authentication: {get_environment_label()}")
 
 if token_present():
-    st.success("BigQuery token is configured for this local session.")
+    st.success(
+        "BigQuery authentication is configured. In deployed mode, MeterFlow IQ "
+        "uses keyless Cloud Run / ADC with a read-only BigQuery service account."
+    )
 else:
     st.warning(
-        "GCP_ACCESS_TOKEN is not configured. Generate a fresh token in Google Cloud "
-        "Shell and add it to your local .env file."
+        "BigQuery authentication is not configured. Use local ADC for development "
+        "or deploy with a Cloud Run service account."
     )
 
 st.markdown(
@@ -71,31 +74,13 @@ Use the left navigation to open:
 
 ### Current authentication note
 
-This local MVP uses a temporary Google access token in `.env`.
+The deployed app uses **Google Cloud Run / Application Default Credentials**
+with a read-only BigQuery service account.
 
-If BigQuery errors after about an hour, refresh the token in Google Cloud Shell:
-"""
-)
+No service account key or temporary access token is required for the deployed app.
 
-st.code(
-    "gcloud auth print-access-token",
-    language="bash",
-)
-
-st.markdown(
-    """
-Then update your local `.env` file:
-"""
-)
-
-st.code(
-    "GCP_ACCESS_TOKEN=...",
-    language="text",
-)
-
-st.markdown(
-    """
-Finally, restart Streamlit.
+For local development, use Google Application Default Credentials when available.
+A temporary `GCP_ACCESS_TOKEN` fallback may be used only for local testing.
 """
 )
 

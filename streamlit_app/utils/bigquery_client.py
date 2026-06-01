@@ -285,6 +285,27 @@ def get_environment_label() -> str:
     return f"{runtime_label} / auth unresolved"
 
 
+def get_bigquery_auth_caption() -> str:
+    """
+    Return a short user-facing BigQuery authentication caption.
+    """
+    auth_label = get_environment_label()
+
+    if "Cloud Run" in auth_label and "ADC" in auth_label:
+        return (
+            "BigQuery auth: Cloud Run / ADC using keyless service-account "
+            "identity."
+        )
+
+    if "temporary access token" in auth_label:
+        return "BigQuery auth: temporary token fallback for local testing only."
+
+    if "ADC" in auth_label:
+        return "BigQuery auth: Application Default Credentials."
+
+    return "BigQuery auth is configured through the app environment."
+
+
 def token_present() -> bool:
     """
     Return whether BigQuery authentication appears available.

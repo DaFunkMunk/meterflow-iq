@@ -34,6 +34,7 @@ if str(APP_DIR) not in sys.path:
 from utils.bigquery_client import (
     clear_streamlit_caches,
     fq_table,
+    get_bigquery_auth_caption,
     get_environment_label,
     run_query,
 )
@@ -67,10 +68,7 @@ with st.sidebar:
         clear_streamlit_caches()
         st.rerun()
 
-    st.caption(
-        "If BigQuery authentication fails, refresh `GCP_ACCESS_TOKEN` "
-        "in `.env`, stop Streamlit, and rerun the app."
-    )
+    st.caption(get_bigquery_auth_caption())
 
 
 # -----------------------------------------------------------------------------
