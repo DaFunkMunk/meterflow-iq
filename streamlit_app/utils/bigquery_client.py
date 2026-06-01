@@ -355,6 +355,7 @@ def fully_qualified_table(table_or_view_name: str) -> str:
 qualified_table = fully_qualified_table
 table_ref = fully_qualified_table
 bq_table = fully_qualified_table
+fq_table = fully_qualified_table
 
 
 @st.cache_data(ttl=300, show_spinner=False)
