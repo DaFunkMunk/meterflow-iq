@@ -16,13 +16,14 @@ Do not commit tokens, service account keys, or secrets.
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
-from google.auth.exceptions import DefaultCredentialsError
 from google.auth import default as google_auth_default
+from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import bigquery
 from google.oauth2 import service_account
 from google.oauth2.credentials import Credentials as AccessTokenCredentials
@@ -40,10 +41,31 @@ DEFAULT_LOCATION = "US"
 
 BIGQUERY_SCOPES = ["https://www.googleapis.com/auth/bigquery"]
 
+THIS_FILE = Path(__file__).resolve()
+REPO_ROOT = THIS_FILE.parents[2]
+
 
 # -----------------------------------------------------------------------------
 # Config helpers
 # -----------------------------------------------------------------------------
+
+def _streamlit_secrets_file_exists() -> bool:
+    """
+    Return True only when a Streamlit secrets.toml file exists locally.
+
+    Streamlit renders a visible red alert when st.secrets is accessed and no
+    secrets.toml file exists. In this project, local development usually uses
+    .env instead of secrets.toml, and Cloud Run uses environment variables /
+    Application Default Credentials. This guard prevents noisy local UI alerts.
+    """
+    possible_paths = [
+        Path.home() / ".streamlit" / "secrets.toml",
+        Path.cwd() / ".streamlit" / "secrets.toml",
+        REPO_ROOT / ".streamlit" / "secrets.toml",
+    ]
+
+    return any(path.exists() for path in possible_paths)
+
 
 def _get_secret_path(section: str, key: str) -> Optional[str]:
     """
@@ -52,6 +74,9 @@ def _get_secret_path(section: str, key: str) -> Optional[str]:
     This must not fail when running outside Streamlit, when no secrets.toml
     exists, or when a deployed environment uses only environment variables.
     """
+    if not _streamlit_secrets_file_exists():
+        return None
+
     try:
         section_value = st.secrets.get(section, None)
         if section_value is None:
@@ -70,6 +95,9 @@ def _get_secret_top_level(key: str) -> Optional[str]:
     """
     Safely read st.secrets[key].
     """
+    if not _streamlit_secrets_file_exists():
+        return None
+
     try:
         value = st.secrets.get(key, None)
         if value is None:
@@ -174,6 +202,9 @@ def _get_service_account_info_from_streamlit_secrets() -> Optional[Dict[str, Any
     This is optional. In this project, Google Cloud org policy currently blocks
     service account key creation, so Cloud Run + ADC is the target deploy path.
     """
+    if not _streamlit_secrets_file_exists():
+        return None
+
     try:
         info = st.secrets.get("gcp_service_account", None)
         if not info:
@@ -259,6 +290,7 @@ def is_temporary_token_mode() -> bool:
     Return True when the client is using temporary GCP_ACCESS_TOKEN fallback.
     """
     return get_bigquery_auth_mode() == "temporary_access_token"
+
 
 def get_environment_label() -> str:
     """

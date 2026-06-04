@@ -10,25 +10,19 @@ health, exceptions, reconciliation, facility KPIs, and RCA context.
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import streamlit as st
 
-
-# Make streamlit_app/utils importable from app and pages.
-APP_DIR = Path(__file__).resolve().parent
-if str(APP_DIR) not in sys.path:
-    sys.path.insert(0, str(APP_DIR))
-
-from utils.bigquery_client import get_environment_label, token_present
-
-
 st.set_page_config(
-    page_title="MeterFlow IQ - Command Center",
-    page_icon="📊",
+    page_title="MeterFlowIQ - Command Center",
+    page_icon="⚙️",
     layout="wide",
     initial_sidebar_state="expanded",
+)
+
+# project imports go AFTER st.set_page_config
+from utils.bigquery_client import (
+    get_environment_label,
+    token_present,
 )
 
 st.title("MeterFlow IQ - Command Center")

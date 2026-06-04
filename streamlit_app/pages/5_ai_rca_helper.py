@@ -37,6 +37,12 @@ from utils.bigquery_client import (
     get_environment_label,
     run_query,
 )
+from utils.postgres_client import (
+    build_exception_group_key,
+    get_postgres_auth_caption,
+    postgres_writeback_enabled,
+    save_ai_rca_review,
+)
 
 
 st.set_page_config(
@@ -1201,7 +1207,7 @@ st.caption(
     "has a safe, structured, facts-only request template."
 )
 
-st.text_area(
+prompt_preview_text = st.text_area(
     "Prompt preview",
     value=prompt_preview,
     height=500,
@@ -1209,21 +1215,24 @@ st.text_area(
 
 
 # -----------------------------------------------------------------------------
-# Optional analyst review mockup
+# Human-in-the-loop review writeback
 # -----------------------------------------------------------------------------
 
-st.subheader("Human-in-the-Loop Review Mockup")
+st.subheader("Human-in-the-Loop Review")
+st.caption(get_postgres_auth_caption())
 
-review_col1, review_col2 = st.columns(2)
+review_col1, review_col2, review_col3 = st.columns(3)
 
 with review_col1:
     analyst_decision = st.selectbox(
         "Analyst decision",
         options=[
             "Not reviewed",
-            "Accept suggested checks",
-            "Needs more investigation",
-            "Reject / not enough evidence",
+            "Investigating",
+            "Needs source-system review",
+            "Needs data-engineering review",
+            "Resolved",
+            "Ignored",
         ],
     )
 
@@ -1231,24 +1240,102 @@ with review_col2:
     analyst_priority = st.selectbox(
         "Priority",
         options=[
+            "Low",
             "Medium",
             "High",
-            "Low",
             "Critical",
         ],
+        index=1,
+    )
+
+with review_col3:
+    assigned_to = st.text_input(
+        "Assigned to",
+        value="Nate",
     )
 
 analyst_notes = st.text_area(
     "Analyst notes",
     value="",
-    placeholder="Future PostgreSQL writeback will store notes, assignments, review status, and audit history.",
     height=120,
 )
 
-st.caption(
-    "Writeback is not enabled yet. The project plan reserves PostgreSQL for exception status, notes, "
-    "assignments, AI review history, and audit trail."
+save_review = st.button(
+    "Save review",
+    type="primary",
 )
+
+if save_review:
+    if not postgres_writeback_enabled():
+        st.warning(get_postgres_auth_caption())
+    else:
+        exception_group_key = build_exception_group_key(
+            production_date=selected_row.get("production_date"),
+            facility_id=selected_row.get("facility_id"),
+            exception_type=selected_row.get("exception_type"),
+            severity=selected_row.get("severity"),
+        )
+
+        if related_exception_df.empty:
+            exception_id = None
+        else:
+            exception_id = related_exception_df.iloc[0].get("exception_id")
+
+        if analyst_decision == "Resolved":
+            accepted_flag = True
+        elif analyst_decision == "Ignored":
+            accepted_flag = False
+        else:
+            accepted_flag = None
+
+        selected_rca_group_label = label_by_group_id.get(
+            selected_exception_group_id,
+            str(selected_exception_group_id),
+        )
+
+        activity_detail = {
+            "page_name": "AI RCA Helper",
+            "source": "streamlit_app/pages/5_ai_rca_helper.py",
+            "selected_rca_group_id": safe_value(selected_exception_group_id),
+            "selected_rca_group_label": selected_rca_group_label,
+            "auth_source": "PostgreSQL app-state writeback",
+        }
+
+        try:
+            save_result = save_ai_rca_review(
+                exception_group_key=exception_group_key,
+                exception_id=exception_id,
+                production_date=selected_row.get("production_date"),
+                facility_id=selected_row.get("facility_id"),
+                facility_name=selected_row.get("facility_name"),
+                exception_type=selected_row.get("exception_type"),
+                severity=selected_row.get("severity"),
+                status=analyst_decision,
+                priority=analyst_priority,
+                assigned_to=assigned_to,
+                note_text=analyst_notes,
+                updated_by="streamlit_user",
+                prompt_text=prompt_preview_text,
+                response_text=plain_english_summary,
+                ai_provider="rules_based_mvp",
+                reviewer_decision=analyst_decision,
+                accepted_flag=accepted_flag,
+                reviewer_comments=analyst_notes,
+                activity_detail=activity_detail,
+            )
+
+            if save_result.get("saved"):
+                st.success(
+                    "Review saved to PostgreSQL app-state tables for "
+                    f"`{exception_group_key}`."
+                )
+            else:
+                st.warning(save_result.get("message", get_postgres_auth_caption()))
+        except Exception:
+            st.error(
+                "Unable to save review to PostgreSQL app-state tables. Check "
+                "writeback configuration and database connectivity."
+            )
 
 
 # -----------------------------------------------------------------------------
