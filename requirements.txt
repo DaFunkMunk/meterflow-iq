@@ -6,6 +6,7 @@ python-dotenv
 pyspark
 streamlit
 google-cloud-bigquery
+google-genai
 sqlalchemy
 psycopg[binary]
 pyodbc

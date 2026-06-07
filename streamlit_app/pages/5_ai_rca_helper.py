@@ -37,6 +37,13 @@ from utils.bigquery_client import (
     get_environment_label,
     run_query,
 )
+from utils.gemini_client import (
+    generate_gemini_rca,
+    gemini_demo_pin_configured,
+    gemini_demo_pin_matches,
+    gemini_enabled,
+    get_gemini_caption,
+)
 from utils.postgres_client import (
     build_exception_group_key,
     get_postgres_auth_caption,
@@ -1212,6 +1219,55 @@ prompt_preview_text = st.text_area(
     value=prompt_preview,
     height=500,
 )
+
+
+# -----------------------------------------------------------------------------
+# Optional Gemini RCA summary
+# -----------------------------------------------------------------------------
+
+st.subheader("Gemini RCA Summary")
+st.caption(get_gemini_caption())
+st.caption(
+    "AI-assisted output must be reviewed by the analyst against the facts above "
+    "before it is used for RCA decisions."
+)
+
+if gemini_demo_pin_configured():
+    gemini_demo_pin = st.text_input(
+        "Gemini demo PIN",
+        value="",
+        type="password",
+    )
+else:
+    gemini_demo_pin = ""
+
+generate_gemini_summary = st.button(
+    "Generate Gemini RCA Summary",
+)
+
+if generate_gemini_summary:
+    if not gemini_enabled():
+        st.warning(get_gemini_caption())
+    elif not gemini_demo_pin_matches(gemini_demo_pin):
+        st.warning("Gemini demo PIN does not match.")
+    else:
+        with st.spinner("Generating Gemini RCA summary..."):
+            gemini_result = generate_gemini_rca(prompt_preview_text)
+
+        if gemini_result.get("ok"):
+            st.success("Gemini RCA summary generated for analyst review.")
+            st.text_area(
+                "Gemini response",
+                value=gemini_result.get("response_text", ""),
+                height=300,
+            )
+        else:
+            st.error(
+                gemini_result.get(
+                    "message",
+                    "Gemini request failed. Check API configuration and quota.",
+                )
+            )
 
 
 # -----------------------------------------------------------------------------
