@@ -33,7 +33,7 @@ from google.oauth2.credentials import Credentials as AccessTokenCredentials
 # Environment / constants
 # -----------------------------------------------------------------------------
 
-load_dotenv()
+load_dotenv(override=True)
 
 DEFAULT_PROJECT_ID = "project-616f71e8-6bb8-4927-978"
 DEFAULT_DATASET_ID = "meterflow_iq_curated"
